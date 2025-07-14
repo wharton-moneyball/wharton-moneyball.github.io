@@ -3,16 +3,131 @@ title: "Problem Set 7"
 output: html_document
 ---
 
-# Testing Regression Models
-
-1. 
-```{r}
-plot(cars)
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(cache = TRUE, fig.align = "center", include = FALSE) # set include = TRUE to see solutions in knitted RMarkdown
+library(tidyverse)
+library(ggplot2)
 ```
 
-Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
 
-When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Cmd+Shift+K* to preview the HTML file). 
+# Testing Regression Models
 
-The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+We will now continue modeling data with regression, but we can now test and compare different models more efficiently. We will use this * [mlb_payrolls_train.csv](data/mlb_payrolls_train.csv) to analyze general manager performance based on team payrolls and winning percentages.
 
+1. First, load in the data to R. Let's see the range of seasons that are included in this data 
+```{r, include = TRUE}
+payroll <- read_csv("data/mlb_payrolls_train.csv")
+
+unique(payroll$yearID)
+```
+1. We can see that the data ranges from 1998 to 2023. Since the 2020 season was shortened due to Covid, filter it out. Then use `mutate()` to create a column names `WP` based on wins (W) and games (G). 
+
+```{r column names}
+head(payroll)
+```
+
+
+```{r filter and mutate}
+payroll <- payroll %>% 
+  filter(yearID != 2020) %>% 
+  mutate(WP = W/G)
+```
+
+
+2. Then, explore the relationship between payrolls and winning percentage by generating a scatterplot. Use `ifelse()` with the `%in%` operator to mark the Oakland A's and New York Yankees' points on the plot. Be sure to mark them with different colors by using `scale_color_manual()` and to change the alpha values if needed so that overlapping point's don't completely obscure each other.
+```{r plot}
+ggplot(payroll, aes(x = payroll_norm, y = WP, 
+                    color = ifelse(name %in% c("New York Yankees", "Oakland Athletics"), name, "Other"))) +
+  geom_point(size = 3, alpha = 0.5) +
+  labs(
+    title = "MLB Payrolls vs Winning Percentage",
+    x = "Normalized Payroll",
+    y = "Winning Percentage",
+    color = "Team"
+  ) +
+  theme_minimal() +
+  scale_color_manual(values = c(
+    "New York Yankees" = "navy",
+    "Oakland Athletics" = "green",
+    "Other" = "black"
+  ))
+
+```
+
+3. Now, fit a regression line to the data as a function of `Norm_Payroll`, then add it to the plot. 
+```{r}
+payroll_model <- lm(WP ~ payroll_norm, data = payroll)
+
+payroll <- payroll %>%
+  mutate(predicted_wp = predict(payroll_model))
+
+# Plot with predicted line
+ggplot(payroll, aes(x = payroll_norm, y = WP)) +
+  geom_point() +
+  geom_line(aes(y = predicted_wp), color = "lightcoral", size = 1) +
+  labs(
+    title = "MLB Payrolls vs Winning Percentage (with Regression Line)",
+    x = "Normalized Payroll",
+    y = "Winning Percentage"
+  ) +
+  theme_minimal()
+```
+
+4. Next, try fitting a model based on `log_payroll_norm` and adding that to the plot. 
+```{r}
+log_model = lm(WP ~ (log_payroll_norm), data = payroll)
+payroll <- payroll %>%
+  mutate(log_predicted_wp = predict(log_model))
+ggplot(payroll, aes(x = payroll_norm, y = WP)) +
+  geom_point() +
+  geom_line(aes(y = log_predicted_wp), color = "lightcoral", size = 1) +
+  labs(
+    title = "MLB Payrolls vs Winning Percentage (with Regression Line)",
+    x = "Normalized Payroll",
+    y = "Winning Percentage"
+  ) +
+  theme_minimal()
+```
+You should see that the log model will be non-linear. Just by looking at the plots, which seems to fit the data better? 
+
+5. One way to potentially look at model performance is with the residuals. Using `add_residual` from `modelr`, add a column of residuals from each model to your payroll table. Then, generate a scatter plot of the residuals for each model. 
+```{r}
+library(modelr)
+payroll <- payroll %>%
+  add_residuals(payroll_model, var = "residuals") %>%
+  add_residuals(log_model, var = "log_residuals")
+
+ggplot(payroll, aes(x = payroll_norm)) +
+  geom_point(aes(y = residuals), color = "lightblue") +
+  geom_point(aes(y = log_residuals), color = "lightcoral") +
+  labs(
+    title = "Residuals of Payroll Models",
+    x = "Normalized Payroll",
+    y = "Residuals"
+  ) +
+  theme_minimal() 
+```
+
+An indication of a poor model fit is a non-uniform residual plot. This would indicate that perhaps a linear model is being used when the underlying trend is instead logarithmic, or polynomial. Do you observe this? 
+
+6. Finally, we can directly compare our models with out-of-sample performance. Load in  *[mlb_payrolls_test.csv](data/mlb_payrolls_test.csv) and call it `payrolls_test`. Do not refit your model but instead use `predict` to generate predictions for the test data set called `test_pred` and `test_log_pred`, similar to its usage in Lecture 6. Then, use the line below to compute the RMSE for each model. 
+```{r}
+payrolls_test <- read_csv("data/mlb_payrolls_test.csv")
+payrolls_test <- payrolls_test %>%
+  mutate(
+    test_pred = predict(payroll_model, newdata = payrolls_test),
+    test_log_pred = predict(log_model, newdata = payrolls_test)
+  )
+```
+
+```{r RMSE, include = TRUE}
+rmse <- sqrt(mean((payrolls_test$WP - payrolls_test$test_pred)^2))
+rmse_log <- sqrt(mean((payrolls_test$WP - payrolls_test$test_log_pred)^2))
+```
+
+```{r values}
+rmse
+rmse_log
+```
+
+Based on the RMSE values, which model is better? 
