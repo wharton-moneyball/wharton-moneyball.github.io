@@ -118,7 +118,7 @@ ggplot(pbp_grouped, aes(x = attempts, y = avg_yards_gained)) +
   ) +
   theme_minimal()
 ```
-9. Now, let's add a third variable. Set the color to equal `avg_cpoe` and use `scale_color_viridis_c()` to set the color scale. Make sure to label the color legend as "Average CPOE".
+9. Now, let's add a third variable. Set the color to equal `avg_cpoe` and use `scale_color_viridis_c()` to set the color scale.
 
 ```{r}
 ggplot(pbp_grouped, aes(x = attempts, y = avg_yards_gained, color = avg_cpoe)) +
@@ -188,6 +188,7 @@ pbp_explosive <- pbp_2024 %>%
       TRUE ~ 0
     )
   ) %>% 
+  filter(explosive == 1) %>% 
   select(
     game_id,
     play_id,
@@ -203,10 +204,7 @@ head(pbp_explosive)
 ```
 12. Let's visualize the distribution of explosive plays by defensive team. Use `geom_bar()` to create a bar plot of the number of explosive plays by `defteam`. Use `fill = defteam` to color the bars by team and use `labs()` to set the axis and plot titles.
 ```{r}
-pbp_explosive_only <- pbp_explosive %>%
-  filter(explosive == 1)
-
-ggplot(pbp_explosive_only, aes(x = defteam, fill = defteam)) +
+ggplot(pbp_explosive, aes(x = defteam, fill = defteam)) +
   geom_bar() +
   labs(
     title = "Number of Explosive Plays Allowed by Defensive Team",
@@ -221,7 +219,6 @@ ggplot(pbp_explosive_only, aes(x = defteam, fill = defteam)) +
 
 ```{r}
 pbp_explosive_slice <- pbp_explosive %>%
-  filter(explosive == 1) %>%  # only explosive plays
   group_by(defteam, play_type) %>%
   reframe(n_explosive = n()) %>%
   group_by(play_type) %>%
@@ -239,22 +236,52 @@ ggplot(pbp_explosive_slice, aes(x = reorder(defteam, -n_explosive), y = n_explos
   theme(axis.text.x = element_text(angle = 45, hjust = 1), legend.position = "none")
 ```
 
-14. *Challenge*: Finally, let's visualize the relationship between explosive plays and yards to go with a heat map. This time, group by defensive team and *down* and use `reframe()` to obtain the explosive play rate in each category. Then, use `geom_tile()` to create a heat map with `defteam` on the x-axis, `down` on the y-axis, and fill based on the explosive play rate. Set a color gradient to your liking.
-```{r}
-explosive_rate <- pbp_explosive %>%
+14. *Challenge*: Finally, let's visualize the relationship between explosive plays and yards to go with a heat map. First, run the following code below to obtain the needed columns for this plot.
+```{r set up data table, include = TRUE}
+pbp_explosive_rate <- pbp_2024 %>%
+  filter(play_type %in% c("pass", "run"),
+         !is.na(yards_gained),
+         !is.na(defteam),
+         !is.na(down),
+         !is.na(yardline_100)) %>%
+  mutate(
+    explosive = case_when(
+      play_type == "run"  & yards_gained >= 10 ~ 1,
+      play_type == "pass" & yards_gained >= 20 ~ 1,
+      TRUE ~ 0
+    )
+  ) %>% 
+  select(
+    game_id,
+    play_id,
+    defteam,          # defensive team
+    play_type,        # pass or run
+    ydstogo,          # yards to go for first down
+    yardline_100,     # field position (how far from opponent's end zone)
+    yards_gained,     # actual yards gained on play
+    explosive         # your new indicator (1 or 0)
+  )
+```
+
+Then, group by `defteam` and `ydstogo` and obtain the explosive play *rate*, instead of number of explosive plays. *Hint: You will need to use `n()` and `sum()` for this task.* Then, use `geom_tile()` to create a heat map with `defteam` on the x-axis, `down` on the y-axis, and fill based on the number of explosive plays. Set a color gradient to your liking.
+
+```{r explosive rate}
+pbp_explosive_rate <- pbp_explosive_rate %>%
   group_by(defteam, ydstogo) %>%
   reframe(
-    n_plays = n(),
     n_explosive = sum(explosive),
-    explosive_rate = n_explosive / n_plays,
-  )
+    n_total = n(),
+    explosive_rate = n_explosive / n_total
+  ) %>%
+  ungroup()
+```
 
-
-ggplot(explosive_rate, aes(x = ydstogo, y = reorder(defteam, -explosive_rate), fill = explosive_rate)) +
+```{r heat map}
+ggplot(pbp_explosive_rate, aes(x = ydstogo, y = reorder(defteam, -explosive_rate), fill = explosive_rate)) +
   geom_tile(color = "white") +
   scale_fill_viridis_c(option = "C", direction = -1, name = "Explosive Rate") +
   labs(
-    title = "Explosive Plays Allowed by Down and Defensive Team",
+    title = "Explosive Rate Allowed by Down and Defensive Team",
     x = "Yards to Go",
     y = "Defensive Team"
   ) +
@@ -263,5 +290,5 @@ ggplot(explosive_rate, aes(x = ydstogo, y = reorder(defteam, -explosive_rate), f
         axis.text.y = element_text(size = 10))
 ```
 
-Discuss with fellow students possible conclusions that can be drawn from the visualizations in this section. How are teams' defenses stacking up against explosive plays? Are some of the teams allowing many explosive plays actually because the offense is sitting at 20+ yards to go or are they allowing many explosive plays across the board?
+Discuss with fellow students possible conclusions that can be drawn from the visualizations in this section. How are teams' defenses stacking up against explosive plays? How much should certain bins in this visualization be weighed over others? 
 

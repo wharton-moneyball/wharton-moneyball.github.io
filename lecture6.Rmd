@@ -10,15 +10,17 @@ library(tidyverse)
 
 In [Lecture 4](lecture4.html), we looked at predicting an MLB player's 2015 batting average using their 2014 batting average. We did so by binning the data and looking at the average within each bin. What if we wanted to make the bins infinitesimally small? This brings us to the ideas of *correlation* and the *regression method*.
 
-We again load the data (if you don't have it, you can download it [here](data/batting_2014_2015.RData)) and use the `spread` function to separate the 2014 and 2015 batting averages into separate columns. 
+We again load the data (if you don't have it, you can download it [here](data/batting_2014_2015.RData)) and use the `pivot_wider` function to separate the 2014 and 2015 batting averages into separate columns. 
 
 ```{r load batting_2014_2015, message = FALSE}
 load("data/batting_2014_2015.RData")
-batting_2014_2015 <-
-  batting_2014_2015 %>%
-  spread(yearID, BA) %>%
-  rename(BA_2014 = `2014`,
-         BA_2015 = `2015`)
+batting_2014_2015 <- batting_2014_2015 %>%
+  pivot_wider(
+    names_from = yearID,
+    values_from = BA,
+    names_prefix = "BA_"
+  )
+head(batting_2014_2015)
 ```
 
 Again we plot the 2014 batting averages against the 2015 batting averages:
@@ -129,7 +131,7 @@ g
 To find the regression coefficients, $a$ and $b$, we use the function `lm()`. The usage of `lm()` is as follows:
 
 ```{r lm fn}
-fit <- lm(BA_2015 ~ BA_2014, data = batting_2014_2015)
+model <- lm(BA_2015 ~ BA_2014, data = batting_2014_2015)
 ```
 
 The first argument in the `lm()` call is called a `formula`. This takes input `y ~ x`, where `y` is our response and `x` is our predictor or covariate.  In the `lm()` call above, the column `BA_2015` is our response and `BA_2014` is our predictor. 
@@ -138,7 +140,19 @@ The second argument in `lm()` is where we specifiy our data: `batting_2014_2015`
 
 Our new object, `fit`, contains a lot of information about our regression line. At the moment, we just want the coefficients. We can access the coefficients as follows:
 ```{r get coefficients}
-fit$coefficients
+model$coefficients
+```
+
+We can plot the data by feeding these coefficients to `geom_abline()`, however this approach only works for linear regression. A more efficient way is to use `predict()` to add predicted values from the model to our dataset, then add these points to our plot with `geom_line()`. We can do this as below:
+```{r plot predictions}
+batting_2014_2015 <- batting_2014_2015 %>%
+  mutate(pred = predict(model))
+
+ggplot(data = batting_2014_2015) +
+  geom_point(aes(x = BA_2014, y = BA_2015)) + 
+  geom_line(aes(x = BA_2014, y = pred), color = "lightcoral", size = 1) +
+  labs(x = "2014 Batting Average", y = "2015 Batting Average") +
+  labs(title = "Batting Average w/ Regression Line")
 ```
 
 
@@ -185,13 +199,13 @@ g
 
 ### Predict
 
-So far we have looked at the predicted values from our *training* data; that is, the data we used to fit our linear model. Suppose we have more players' batting averages from 2014 but we do not have their batting averages from 2015. We can use our linear model to predict these players' 2015 batting average using the function `predict`. 
+So far we have looked at the predicted values from our *training* data; that is, the data we used to fit our linear model. Suppose we have more players' batting averages from 2014 but we do not have their batting averages from 2015. We can once again use the `predict` function to obtain values for these new players based on our model. 
 
-In the below code, we enter the players' 2014 batting averages as the tibble `new_data`. We then use the function `predict`. The first argument of `predict` is the fitted model, `fit`. The second argument is `new_data`.
+In the below code, we enter the players' 2014 batting averages as the tibble `new_data`. We then use the function `predict`. The first argument of `predict` is the fitted model, `model`. The second argument is `new_data`.
 
 ```{r new_data predict}
 new_data <- tibble(BA_2014 = c(0.241, 0.31, 0.265))
-new_pred <- predict(fit, new_data)
+new_pred <- predict(model, new_data)
 new_pred
 ```
 
@@ -199,46 +213,17 @@ We can also add these predictions to `new_data` using `add_predictions`:
 
 ```{r new_data add_predictions}
 new_data <- new_data %>%
-  add_predictions(fit)
+  add_predictions(model)
 new_data
 ```
 
 We add these predictions to our plot:
 
 ```{r plot new predictions}
-g <- ggplot(batting_2014_2015) +
+ggplot(batting_2014_2015) +
   geom_point(aes(x = BA_2014, y = BA_2015)) +
-  geom_abline(intercept = 0.1409779, slope = 0.4851417, color = "red") +
+  geom_line(aes(x = BA_2014, y = pred), color = "lightcoral", size = 1) +
   geom_point(data = new_data, mapping = aes(x = BA_2014, y = pred), color = "dodgerblue")
-g
 ```
-
-
-### More visualization with `data_grid`
-
-In the above code, we drew our fitted line using our coefficients from `fit` and `geom_abline` to specify the slope and the intercept. An alternative way to plot our fitted line is to use the function `data_grid`. This function creates a grid of evenly spaced points over the range of our `x` data.
-
-```{r data_grid}
-grid <- batting_2014_2015 %>%
-  data_grid(BA_2014)
-grid
-```
-
-We can then add our predicted values at these grid points using `add_predictions` and our linear model, `fit`.
-
-```{r grid predict}
-grid <- grid %>%
-  add_predictions(fit)
-```
-
-Using this `grid` dataset, we can add a `geom_line` over our scatter plot of 2014 vs 2015 batting averages. This just "connects the dots" between the points in `grid`. 
-
-```{r plot grid predictions}
-ggplot(data = batting_2014_2015) +
-  geom_point(aes(x = BA_2014, y = BA_2015)) +
-  geom_line(data = grid, aes(x = BA_2014, y = pred), color = "red")
-```
-
-At this point you might ask: why should I use `data_grid` instead of just `geom_abline`? The real benefit of using `data_grid` is when you want to visualize a more complicated model for which there is no `geom`. For instance, if you have a probit or logistic model!
 
 For more details on modelling using the `tidyverse`, you can look at [Chapter 23](http://r4ds.had.co.nz/model-basics.html) of the book *R for Data Science* by Hadley Wickham and Garrett Grolemund. It's also a great reference in general!

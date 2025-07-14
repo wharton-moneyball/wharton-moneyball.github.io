@@ -44,8 +44,8 @@ navbar:
           href: ps3.html
         - text: "Problem Set 4"
           href: ps4.html
-        # - text: "Problem Set 5"
-        #   href: ps5.html
+        - text: "Problem Set 5"
+          href: ps5.html
         # - text: "Problem Set 6"
         #   href: ps6.html
         # - text: "---"
