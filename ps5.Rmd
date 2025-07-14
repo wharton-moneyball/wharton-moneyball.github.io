@@ -18,8 +18,8 @@ library(nflfastR)
 library(ggplot2)
 ```
 
-1. Let's load in the data for the 2024 season. This dataset contains play-by-play data for all games in the 2023 NFL season. 
-```{r}
+1. Let's load in the data for the 2024 season. This dataset contains play-by-play data for all games in the 2024 NFL season. 
+```{r, include = TRUE}
 pbp_2024 <- load_pbp(2024)
 ```
 
