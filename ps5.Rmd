@@ -263,7 +263,7 @@ pbp_explosive_rate <- pbp_2024 %>%
   )
 ```
 
-Then, group by `defteam` and `ydstogo` and obtain the explosive play *rate*, instead of number of explosive plays. *Hint: You will need to use `n()` and `sum()` for this task.* Then, use `geom_tile()` to create a heat map with `defteam` on the x-axis, `down` on the y-axis, and fill based on the number of explosive plays. Set a color gradient to your liking.
+Then, group by `defteam` and `ydstogo` and obtain the explosive play *rate*, instead of number of explosive plays. *Hint: You will need to use `n()` and `sum()` for this task.* Then, use `geom_tile()` to create a heat map with `defteam` on the x-axis, `ydstogo` on the y-axis, and fill based on the number of explosive plays. Set a color gradient to your liking.
 
 ```{r explosive rate}
 pbp_explosive_rate <- pbp_explosive_rate %>%
