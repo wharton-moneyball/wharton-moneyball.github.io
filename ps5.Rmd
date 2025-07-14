@@ -18,14 +18,14 @@ library(nflfastR)
 library(ggplot2)
 ```
 
-1. Let's load in the data for the 2023 season. This dataset contains play-by-play data for all games in the 2023 NFL season. 
+1. Let's load in the data for the 2024 season. This dataset contains play-by-play data for all games in the 2023 NFL season. 
 ```{r}
-pbp_2023 <- load_pbp(2023)
+pbp_2024 <- load_pbp(2024)
 ```
 
 1. We can see that there are more than 100 columns. Let's tackle specific questions one at a time. First, lets look at quarterback completions by filtering for where `play_type == pass` and then selecting the following columns in a new table caled `pbp_pass`. 
 ```{r filtering, include = TRUE}
-pbp_pass <- pbp_2023 %>% 
+pbp_pass <- pbp_2024 %>% 
   filter(play_type == "pass") %>% 
   select(play_type, pass_location, yards_gained, air_yards, yards_after_catch, 
          passer_player_name, complete_pass, incomplete_pass, cpoe)
@@ -144,7 +144,7 @@ pbp_grouped %>%
   ggplot(aes(x = passer_player_name, y = value, fill = metric)) +
   geom_col(position = "dodge") +
   labs(
-    title = "Top 10 Quarterbacks by Average Yards Gained and CPOE",
+    title = "Top 10 Quarterbacks by Average Yards",
     x = "Quarterback",
     y = "Value"
   ) +
@@ -161,7 +161,7 @@ pbp_grouped_2 <- pbp_grouped %>%
 ggplot(pbp_grouped_2, aes(x = passer_player_name, y = value, fill = metric)) +
   geom_col(position = 'dodge') +
   labs(
-    title = "Top 10 Quarterbacks by Average Yards Gained and CPOE",
+    title = "Top 10 Quarterbacks by CPOE",
     x = "Quarterback",
     y = "Average Yards Gained"
   ) +
@@ -169,12 +169,13 @@ ggplot(pbp_grouped_2, aes(x = passer_player_name, y = value, fill = metric)) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) 
 
 ```
+What have you learned from these graphs? How do quarterbacks differ in their average yards gained vs average completion yards over expected? Is Lamar the GOAT??
 
 Let's do one more small case study on explosive plays. 
 
 11. First, start by filtering the data as below to get the appropriate columns. 
 ```{r explosive filtering, include = TRUE}
-pbp_explosive <- pbp_2023 %>%
+pbp_explosive <- pbp_2024 %>%
   filter(play_type %in% c("pass", "run"),
          !is.na(yards_gained),
          !is.na(defteam),
@@ -202,10 +203,13 @@ head(pbp_explosive)
 ```
 12. Let's visualize the distribution of explosive plays by defensive team. Use `geom_bar()` to create a bar plot of the number of explosive plays by `defteam`. Use `fill = defteam` to color the bars by team and use `labs()` to set the axis and plot titles.
 ```{r}
-ggplot(pbp_explosive, aes(x = defteam, fill = defteam)) +
+pbp_explosive_only <- pbp_explosive %>%
+  filter(explosive == 1)
+
+ggplot(pbp_explosive_only, aes(x = defteam, fill = defteam)) +
   geom_bar() +
   labs(
-    title = "Distribution of Explosive Plays by Defensive Team",
+    title = "Number of Explosive Plays Allowed by Defensive Team",
     x = "Defensive Team",
     y = "Number of Explosive Plays"
   ) +
@@ -260,3 +264,4 @@ ggplot(explosive_rate, aes(x = ydstogo, y = reorder(defteam, -explosive_rate), f
 ```
 
 Discuss with fellow students possible conclusions that can be drawn from the visualizations in this section. How are teams' defenses stacking up against explosive plays? Are some of the teams allowing many explosive plays actually because the offense is sitting at 20+ yards to go or are they allowing many explosive plays across the board?
+

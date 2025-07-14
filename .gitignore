@@ -5,7 +5,7 @@
 live-lectures
 
 # remaining lectures, problem sets
-lecture[5-8]*.html
+lecture[6-8]*.html
 ps[5-8].html
 
 #########
