@@ -13,7 +13,7 @@
 
 <title>Problem Set 5</title>
 
-<script src="site_libs/header-attrs-2.27/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.29/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/cerulean.min.css" rel="stylesheet" />
@@ -30,8 +30,8 @@
        code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
        pre:not([class]) { background-color: white }</style>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
-<link href="site_libs/font-awesome-6.4.2/css/all.min.css" rel="stylesheet" />
-<link href="site_libs/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.5.2/css/all.min.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet" />
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -466,20 +466,23 @@ libraries, as well as nflfastR.</p>
 <span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">library</span>(nflfastR)</span>
 <span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span></code></pre></div>
 <ol style="list-style-type: decimal">
-<li><p>Let’s load in the data for the 2024 season. This dataset contains
-play-by-play data for all games in the 2023 NFL season.</p></li>
-<li><p>We can see that there are more than 100 columns. Let’s tackle
+<li>Let’s load in the data for the 2024 season. This dataset contains
+play-by-play data for all games in the 2024 NFL season.</li>
+</ol>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>pbp_2024 <span class="ot">&lt;-</span> <span class="fu">load_pbp</span>(<span class="dv">2024</span>)</span></code></pre></div>
+<ol style="list-style-type: decimal">
+<li>We can see that there are more than 100 columns. Let’s tackle
 specific questions one at a time. First, lets look at quarterback
 completions by filtering for where <code>play_type == pass</code> and
 then selecting the following columns in a new table caled
-<code>pbp_pass</code>.</p></li>
+<code>pbp_pass</code>.</li>
 </ol>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>pbp_pass <span class="ot">&lt;-</span> pbp_2024 <span class="sc">%&gt;%</span> </span>
-<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>  <span class="fu">filter</span>(play_type <span class="sc">==</span> <span class="st">&quot;pass&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>  <span class="fu">select</span>(play_type, pass_location, yards_gained, air_yards, yards_after_catch, </span>
-<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a>         passer_player_name, complete_pass, incomplete_pass, cpoe)</span>
-<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a></span>
-<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a><span class="fu">head</span>(pbp_pass)</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>pbp_pass <span class="ot">&lt;-</span> pbp_2024 <span class="sc">%&gt;%</span> </span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>  <span class="fu">filter</span>(play_type <span class="sc">==</span> <span class="st">&quot;pass&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>  <span class="fu">select</span>(play_type, pass_location, yards_gained, air_yards, yards_after_catch, </span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>         passer_player_name, complete_pass, incomplete_pass, cpoe)</span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a><span class="fu">head</span>(pbp_pass)</span></code></pre></div>
 <pre><code>## ── nflverse play by play data ──────────────────────────────────────────────────</code></pre>
 <pre><code>## ℹ Data updated: 2025-04-30 02:39:06 EDT</code></pre>
 <pre><code>## # A tibble: 6 × 9
@@ -529,14 +532,14 @@ related by using a scatterplot. Let’s feed a color and size argument to
 and make the points take up an appropriate amount of space. Feel free to
 change the color argument to a color of your choice!</p></li>
 </ol>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="fu">ggplot</span>(pbp_grouped, <span class="fu">aes</span>(<span class="at">x =</span> attempts, <span class="at">y =</span> avg_yards_gained)) <span class="sc">+</span></span>
-<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">color =</span> <span class="st">&#39;darkseagreen3&#39;</span>, <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
-<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">&quot;Quarterback Attempts vs Average Yards Gained&quot;</span>,</span>
-<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">&quot;Attempts&quot;</span>,</span>
-<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">&quot;Average Yards Gained&quot;</span></span>
-<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="fu">ggplot</span>(pbp_grouped, <span class="fu">aes</span>(<span class="at">x =</span> attempts, <span class="at">y =</span> avg_yards_gained)) <span class="sc">+</span></span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">color =</span> <span class="st">&#39;darkseagreen3&#39;</span>, <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">&quot;Quarterback Attempts vs Average Yards Gained&quot;</span>,</span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">&quot;Attempts&quot;</span>,</span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">&quot;Average Yards Gained&quot;</span></span>
+<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div>
 <p><img src="ps5_files/figure-html/scatter-1.png" width="672" style="display: block; margin: auto;" /></p>
 <ol start="8" style="list-style-type: decimal">
 <li><p>Next, add an abline to the plot using <code>geom_abline()</code>
@@ -567,32 +570,32 @@ Is Lamar the GOAT??</p>
 <li>First, start by filtering the data as below to get the appropriate
 columns.</li>
 </ol>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>pbp_explosive <span class="ot">&lt;-</span> pbp_2024 <span class="sc">%&gt;%</span></span>
-<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>  <span class="fu">filter</span>(play_type <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;pass&quot;</span>, <span class="st">&quot;run&quot;</span>),</span>
-<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>         <span class="sc">!</span><span class="fu">is.na</span>(yards_gained),</span>
-<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>         <span class="sc">!</span><span class="fu">is.na</span>(defteam),</span>
-<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>         <span class="sc">!</span><span class="fu">is.na</span>(down),</span>
-<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a>         <span class="sc">!</span><span class="fu">is.na</span>(yardline_100)) <span class="sc">%&gt;%</span></span>
-<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a>    <span class="at">explosive =</span> <span class="fu">case_when</span>(</span>
-<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a>      play_type <span class="sc">==</span> <span class="st">&quot;run&quot;</span>  <span class="sc">&amp;</span> yards_gained <span class="sc">&gt;=</span> <span class="dv">10</span> <span class="sc">~</span> <span class="dv">1</span>,</span>
-<span id="cb7-10"><a href="#cb7-10" tabindex="-1"></a>      play_type <span class="sc">==</span> <span class="st">&quot;pass&quot;</span> <span class="sc">&amp;</span> yards_gained <span class="sc">&gt;=</span> <span class="dv">20</span> <span class="sc">~</span> <span class="dv">1</span>,</span>
-<span id="cb7-11"><a href="#cb7-11" tabindex="-1"></a>      <span class="cn">TRUE</span> <span class="sc">~</span> <span class="dv">0</span></span>
-<span id="cb7-12"><a href="#cb7-12" tabindex="-1"></a>    )</span>
-<span id="cb7-13"><a href="#cb7-13" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
-<span id="cb7-14"><a href="#cb7-14" tabindex="-1"></a>  <span class="fu">filter</span>(explosive <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb7-15"><a href="#cb7-15" tabindex="-1"></a>  <span class="fu">select</span>(</span>
-<span id="cb7-16"><a href="#cb7-16" tabindex="-1"></a>    game_id,</span>
-<span id="cb7-17"><a href="#cb7-17" tabindex="-1"></a>    play_id,</span>
-<span id="cb7-18"><a href="#cb7-18" tabindex="-1"></a>    defteam,          <span class="co"># defensive team</span></span>
-<span id="cb7-19"><a href="#cb7-19" tabindex="-1"></a>    play_type,        <span class="co"># pass or run</span></span>
-<span id="cb7-20"><a href="#cb7-20" tabindex="-1"></a>    ydstogo,          <span class="co"># yards to go for first down</span></span>
-<span id="cb7-21"><a href="#cb7-21" tabindex="-1"></a>    yardline_100,     <span class="co"># field position (how far from opponent&#39;s end zone)</span></span>
-<span id="cb7-22"><a href="#cb7-22" tabindex="-1"></a>    yards_gained,     <span class="co"># actual yards gained on play</span></span>
-<span id="cb7-23"><a href="#cb7-23" tabindex="-1"></a>    explosive         <span class="co"># your new indicator (1 or 0)</span></span>
-<span id="cb7-24"><a href="#cb7-24" tabindex="-1"></a>  )</span>
-<span id="cb7-25"><a href="#cb7-25" tabindex="-1"></a></span>
-<span id="cb7-26"><a href="#cb7-26" tabindex="-1"></a><span class="fu">head</span>(pbp_explosive)</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>pbp_explosive <span class="ot">&lt;-</span> pbp_2024 <span class="sc">%&gt;%</span></span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>  <span class="fu">filter</span>(play_type <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;pass&quot;</span>, <span class="st">&quot;run&quot;</span>),</span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>         <span class="sc">!</span><span class="fu">is.na</span>(yards_gained),</span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>         <span class="sc">!</span><span class="fu">is.na</span>(defteam),</span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a>         <span class="sc">!</span><span class="fu">is.na</span>(down),</span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a>         <span class="sc">!</span><span class="fu">is.na</span>(yardline_100)) <span class="sc">%&gt;%</span></span>
+<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a>    <span class="at">explosive =</span> <span class="fu">case_when</span>(</span>
+<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a>      play_type <span class="sc">==</span> <span class="st">&quot;run&quot;</span>  <span class="sc">&amp;</span> yards_gained <span class="sc">&gt;=</span> <span class="dv">10</span> <span class="sc">~</span> <span class="dv">1</span>,</span>
+<span id="cb8-10"><a href="#cb8-10" tabindex="-1"></a>      play_type <span class="sc">==</span> <span class="st">&quot;pass&quot;</span> <span class="sc">&amp;</span> yards_gained <span class="sc">&gt;=</span> <span class="dv">20</span> <span class="sc">~</span> <span class="dv">1</span>,</span>
+<span id="cb8-11"><a href="#cb8-11" tabindex="-1"></a>      <span class="cn">TRUE</span> <span class="sc">~</span> <span class="dv">0</span></span>
+<span id="cb8-12"><a href="#cb8-12" tabindex="-1"></a>    )</span>
+<span id="cb8-13"><a href="#cb8-13" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
+<span id="cb8-14"><a href="#cb8-14" tabindex="-1"></a>  <span class="fu">filter</span>(explosive <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb8-15"><a href="#cb8-15" tabindex="-1"></a>  <span class="fu">select</span>(</span>
+<span id="cb8-16"><a href="#cb8-16" tabindex="-1"></a>    game_id,</span>
+<span id="cb8-17"><a href="#cb8-17" tabindex="-1"></a>    play_id,</span>
+<span id="cb8-18"><a href="#cb8-18" tabindex="-1"></a>    defteam,          <span class="co"># defensive team</span></span>
+<span id="cb8-19"><a href="#cb8-19" tabindex="-1"></a>    play_type,        <span class="co"># pass or run</span></span>
+<span id="cb8-20"><a href="#cb8-20" tabindex="-1"></a>    ydstogo,          <span class="co"># yards to go for first down</span></span>
+<span id="cb8-21"><a href="#cb8-21" tabindex="-1"></a>    yardline_100,     <span class="co"># field position (how far from opponent&#39;s end zone)</span></span>
+<span id="cb8-22"><a href="#cb8-22" tabindex="-1"></a>    yards_gained,     <span class="co"># actual yards gained on play</span></span>
+<span id="cb8-23"><a href="#cb8-23" tabindex="-1"></a>    explosive         <span class="co"># your new indicator (1 or 0)</span></span>
+<span id="cb8-24"><a href="#cb8-24" tabindex="-1"></a>  )</span>
+<span id="cb8-25"><a href="#cb8-25" tabindex="-1"></a></span>
+<span id="cb8-26"><a href="#cb8-26" tabindex="-1"></a><span class="fu">head</span>(pbp_explosive)</span></code></pre></div>
 <pre><code>## ── nflverse play by play data ──────────────────────────────────────────────────</code></pre>
 <pre><code>## ℹ Data updated: 2025-04-30 02:39:06 EDT</code></pre>
 <pre><code>## # A tibble: 6 × 8
@@ -624,29 +627,29 @@ between explosive plays and yards to go with a heat map. First, run the
 following code below to obtain the needed columns for this
 plot.</p></li>
 </ol>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a>pbp_explosive_rate <span class="ot">&lt;-</span> pbp_2024 <span class="sc">%&gt;%</span></span>
-<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a>  <span class="fu">filter</span>(play_type <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;pass&quot;</span>, <span class="st">&quot;run&quot;</span>),</span>
-<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a>         <span class="sc">!</span><span class="fu">is.na</span>(yards_gained),</span>
-<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a>         <span class="sc">!</span><span class="fu">is.na</span>(defteam),</span>
-<span id="cb11-5"><a href="#cb11-5" tabindex="-1"></a>         <span class="sc">!</span><span class="fu">is.na</span>(down),</span>
-<span id="cb11-6"><a href="#cb11-6" tabindex="-1"></a>         <span class="sc">!</span><span class="fu">is.na</span>(yardline_100)) <span class="sc">%&gt;%</span></span>
-<span id="cb11-7"><a href="#cb11-7" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb11-8"><a href="#cb11-8" tabindex="-1"></a>    <span class="at">explosive =</span> <span class="fu">case_when</span>(</span>
-<span id="cb11-9"><a href="#cb11-9" tabindex="-1"></a>      play_type <span class="sc">==</span> <span class="st">&quot;run&quot;</span>  <span class="sc">&amp;</span> yards_gained <span class="sc">&gt;=</span> <span class="dv">10</span> <span class="sc">~</span> <span class="dv">1</span>,</span>
-<span id="cb11-10"><a href="#cb11-10" tabindex="-1"></a>      play_type <span class="sc">==</span> <span class="st">&quot;pass&quot;</span> <span class="sc">&amp;</span> yards_gained <span class="sc">&gt;=</span> <span class="dv">20</span> <span class="sc">~</span> <span class="dv">1</span>,</span>
-<span id="cb11-11"><a href="#cb11-11" tabindex="-1"></a>      <span class="cn">TRUE</span> <span class="sc">~</span> <span class="dv">0</span></span>
-<span id="cb11-12"><a href="#cb11-12" tabindex="-1"></a>    )</span>
-<span id="cb11-13"><a href="#cb11-13" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
-<span id="cb11-14"><a href="#cb11-14" tabindex="-1"></a>  <span class="fu">select</span>(</span>
-<span id="cb11-15"><a href="#cb11-15" tabindex="-1"></a>    game_id,</span>
-<span id="cb11-16"><a href="#cb11-16" tabindex="-1"></a>    play_id,</span>
-<span id="cb11-17"><a href="#cb11-17" tabindex="-1"></a>    defteam,          <span class="co"># defensive team</span></span>
-<span id="cb11-18"><a href="#cb11-18" tabindex="-1"></a>    play_type,        <span class="co"># pass or run</span></span>
-<span id="cb11-19"><a href="#cb11-19" tabindex="-1"></a>    ydstogo,          <span class="co"># yards to go for first down</span></span>
-<span id="cb11-20"><a href="#cb11-20" tabindex="-1"></a>    yardline_100,     <span class="co"># field position (how far from opponent&#39;s end zone)</span></span>
-<span id="cb11-21"><a href="#cb11-21" tabindex="-1"></a>    yards_gained,     <span class="co"># actual yards gained on play</span></span>
-<span id="cb11-22"><a href="#cb11-22" tabindex="-1"></a>    explosive         <span class="co"># your new indicator (1 or 0)</span></span>
-<span id="cb11-23"><a href="#cb11-23" tabindex="-1"></a>  )</span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a>pbp_explosive_rate <span class="ot">&lt;-</span> pbp_2024 <span class="sc">%&gt;%</span></span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a>  <span class="fu">filter</span>(play_type <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;pass&quot;</span>, <span class="st">&quot;run&quot;</span>),</span>
+<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a>         <span class="sc">!</span><span class="fu">is.na</span>(yards_gained),</span>
+<span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a>         <span class="sc">!</span><span class="fu">is.na</span>(defteam),</span>
+<span id="cb12-5"><a href="#cb12-5" tabindex="-1"></a>         <span class="sc">!</span><span class="fu">is.na</span>(down),</span>
+<span id="cb12-6"><a href="#cb12-6" tabindex="-1"></a>         <span class="sc">!</span><span class="fu">is.na</span>(yardline_100)) <span class="sc">%&gt;%</span></span>
+<span id="cb12-7"><a href="#cb12-7" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb12-8"><a href="#cb12-8" tabindex="-1"></a>    <span class="at">explosive =</span> <span class="fu">case_when</span>(</span>
+<span id="cb12-9"><a href="#cb12-9" tabindex="-1"></a>      play_type <span class="sc">==</span> <span class="st">&quot;run&quot;</span>  <span class="sc">&amp;</span> yards_gained <span class="sc">&gt;=</span> <span class="dv">10</span> <span class="sc">~</span> <span class="dv">1</span>,</span>
+<span id="cb12-10"><a href="#cb12-10" tabindex="-1"></a>      play_type <span class="sc">==</span> <span class="st">&quot;pass&quot;</span> <span class="sc">&amp;</span> yards_gained <span class="sc">&gt;=</span> <span class="dv">20</span> <span class="sc">~</span> <span class="dv">1</span>,</span>
+<span id="cb12-11"><a href="#cb12-11" tabindex="-1"></a>      <span class="cn">TRUE</span> <span class="sc">~</span> <span class="dv">0</span></span>
+<span id="cb12-12"><a href="#cb12-12" tabindex="-1"></a>    )</span>
+<span id="cb12-13"><a href="#cb12-13" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
+<span id="cb12-14"><a href="#cb12-14" tabindex="-1"></a>  <span class="fu">select</span>(</span>
+<span id="cb12-15"><a href="#cb12-15" tabindex="-1"></a>    game_id,</span>
+<span id="cb12-16"><a href="#cb12-16" tabindex="-1"></a>    play_id,</span>
+<span id="cb12-17"><a href="#cb12-17" tabindex="-1"></a>    defteam,          <span class="co"># defensive team</span></span>
+<span id="cb12-18"><a href="#cb12-18" tabindex="-1"></a>    play_type,        <span class="co"># pass or run</span></span>
+<span id="cb12-19"><a href="#cb12-19" tabindex="-1"></a>    ydstogo,          <span class="co"># yards to go for first down</span></span>
+<span id="cb12-20"><a href="#cb12-20" tabindex="-1"></a>    yardline_100,     <span class="co"># field position (how far from opponent&#39;s end zone)</span></span>
+<span id="cb12-21"><a href="#cb12-21" tabindex="-1"></a>    yards_gained,     <span class="co"># actual yards gained on play</span></span>
+<span id="cb12-22"><a href="#cb12-22" tabindex="-1"></a>    explosive         <span class="co"># your new indicator (1 or 0)</span></span>
+<span id="cb12-23"><a href="#cb12-23" tabindex="-1"></a>  )</span></code></pre></div>
 <p>Then, group by <code>defteam</code> and <code>ydstogo</code> and
 obtain the explosive play <em>rate</em>, instead of number of explosive
 plays. <em>Hint: You will need to use <code>n()</code> and
