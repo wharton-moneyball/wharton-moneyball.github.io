@@ -88,7 +88,7 @@ ggplot(payroll, aes(x = payroll_norm, y = WP)) +
   ) +
   theme_minimal()
 ```
-You should see that the log model will be non-linear. Just by looking at the plots, which seems to fit the data better? 
+You should see that the log model will be non-linear. Just by looking at the plots from 3 and 4, which seems to fit the data better? 
 
 5. One way to potentially look at model performance is with the residuals. Using `add_residual` from `modelr`, add a column of residuals from each model to your payroll table. Then, generate a scatter plot of the residuals for each model. 
 ```{r}
@@ -131,3 +131,31 @@ rmse_log
 ```
 
 Based on the RMSE values, which model is better? 
+
+*Challenge*: Find the difference between the actual WP values and predictions of the *log model* in the test data and add them to `payrolls_test`. Group by team and find the mean difference across all years. Multiply their percentages by 162 to obtain number of wins. Make a bar plot showing teams' mean performance compared to predictions.
+```{r}
+payrolls_test_summary <- payrolls_test %>%
+  mutate(
+    diff_wp = WP - test_log_pred  
+  ) %>%
+  group_by(name) %>%
+  reframe(
+    mean_diff_wp = mean(diff_wp, na.rm = TRUE)
+  ) %>%
+  mutate(
+    wins_from_prediction = mean_diff_wp * 162  # convert WP difference to win difference
+  )
+
+# Plot
+ggplot(payrolls_test_summary, aes(x = reorder(name, wins_from_prediction), y = wins_from_prediction)) +
+  geom_bar(stat = "identity", fill = "blue", alpha = 0.6) +
+  labs(
+    title = "Average Wins Above/Below Prediction by Team",
+    x = "Team",
+    y = "Wins vs Predicted (Payroll Model)"
+  ) +
+  theme_minimal() +
+  coord_flip() +
+  scale_y_continuous(labels = scales::number_format(accuracy = 1))
+```
+

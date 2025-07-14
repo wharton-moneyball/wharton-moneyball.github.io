@@ -91,7 +91,7 @@ diving_hist <-
 diving_hist
 ```
 
-Note that when calculating our `median_score`, the `summarize` function returns a tbl rather than a single value. To "pull" out the single median value from our tbl, we use the `pull` function.
+Note that when calculating our `median_score`, the `reframe` function returns a tbl rather than a single value. To "pull" out the single median value from our tbl, we use the `pull` function.
 
 
 ### Boxplots and violin plots
