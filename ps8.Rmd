@@ -14,8 +14,11 @@ library(ggplot2)
 
 We will now continue modeling data with logistic regression using * [nfl_wp_train.csv](data/nfl_wp_train.csv) to analyze win percentages as a function of multiple variables. The dataset includes `game_id`, `season`, `label_win`, which is a binary (0 or 1) indicator on whether the possessing team won the game, `score_differential`, which is the current score differential between the team in possession and the team on defense, `posteam_spread`, which is the +- spread for the possessing team prior to the game start, `yardline_100`, `down`, and `ydstogo`. 
 
-1. First, load in the data then fit a logistic model using `glm` to predict `label_win` based on `score_differential`
-```{r}
+1. First, load in the data. Next, do some exploratory data analysis (EDA) to understand the data. For example, you can plot the distribution of `score_differential` and `label_win`, and create a scatter plot of `score_differential` vs. `label_win`. Since the target variable, `label_win`, is binary, a good way to visualize the data would be to group data based on bins in your chosen variable and then calculate the win percentage based on the number of `label_win` = 1 values divided by the total number of observations in each bin.
+
+
+2. Then fit a logistic model using `glm` to predict `label_win` based on `score_differential`, then add the model's predictions to the dataset.
+```{r model and predictions.}
 nfl_wp = read.csv('data/nfl_wp_train.csv')
 spread_model = glm(label_win ~ score_differential, data = nfl_wp)
 spread_model
