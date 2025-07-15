@@ -108,7 +108,7 @@ Now that we have our regression line, we can predict a future $y$ value given we
 $$\widehat{y} = 0.141 + 0.485 \times 0.31 = 0.291.$$
 Note that we use $\widehat{y}$ for a predicted value of $y$; we can think of this as $\widehat{y} = E[Y|x]$.
 
-```{r plot predicted y, echo = F}
+```{r plot predicted y, echo = F, warnings = FALSE}
 g <- ggplot(data = batting_2014_2015) + 
   geom_point(aes(x = BA_2014, y = BA_2015)) + 
   labs(x = "2014 Batting Average", y = "2015 Batting Average") + 
@@ -144,7 +144,7 @@ model$coefficients
 ```
 
 We can plot the data by feeding these coefficients to `geom_abline()`, however this approach only works for linear regression. A more efficient way is to use `predict()` to add predicted values from the model to our dataset, then add these points to our plot with `geom_line()`. We can do this as below:
-```{r plot predictions}
+```{r plot predictions, warning = FALSE }
 batting_2014_2015 <- batting_2014_2015 %>%
   mutate(pred = predict(model))
 
@@ -153,6 +153,8 @@ ggplot(data = batting_2014_2015) +
   geom_line(aes(x = BA_2014, y = pred), color = "lightcoral", size = 1) +
   labs(x = "2014 Batting Average", y = "2015 Batting Average") +
   labs(title = "Batting Average w/ Regression Line")
+
+
 ```
 
 
