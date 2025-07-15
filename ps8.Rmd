@@ -12,11 +12,13 @@ library(ggplot2)
 
 # Logistic Regression
 
-We will now continue modeling data with logistic regression using * [nfl_wp_train.csv](data/nfl_wp_train.csv) to analyze win percentages as a function of multiple variables. The dataset includes `game_id`, `season`, `label_win`, which is a binary (0 or 1) indicator on whether the possessing team 
+We will now continue modeling data with logistic regression using * [nfl_wp_train.csv](data/nfl_wp_train.csv) to analyze win percentages as a function of multiple variables. The dataset includes `game_id`, `season`, `label_win`, which is a binary (0 or 1) indicator on whether the possessing team won the game, `score_differential`, which is the current score differential between the team in possession and the team on defense, `posteam_spread`, which is the +- spread for the possessing team prior to the game start, `yardline_100`, `down`, and `ydstogo`. 
 
-
+1. First, load in the data then fit a logistic model using `glm` to predict `label_win` based on `score_differential`
 ```{r}
-plot(cars)
+nfl_wp = read.csv('data/nfl_wp_train.csv')
+spread_model = glm(label_win ~ score_differential, data = nfl_wp)
+spread_model
 ```
 
 Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.

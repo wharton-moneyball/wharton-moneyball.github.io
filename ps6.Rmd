@@ -103,15 +103,14 @@ lm.swim_bike$coefficients
 ```
 
 
-6. We also want to add the regression line to our plot. In [Lecture 6](lecture6.html), we saw that there are two ways of doing this. The first was to take the intercept and slope coefficients produced by our linear model and put them into `geom_abline()` while the second involved creating a `data_grid` over the predictor variable, adding the predictions to the grid, and then drawing a line through the predictions created on the grid using `geom_line`. As discussed in Lecture 6, the first approach only works for simple linear regression, while the second can be extended for all types of regression. For this reason, let's practice using the second approach.
-
+6. We also want to add the regression line to our plot. Use `predict()` to generate predictions based on the model, and `mutate()` to add them to your data. Then, use `geom_line()` to add this predicted line to the plot. You may need to increase the size to increase the visibility of the line.
 ```{r pt1 q6, include=TRUE}
-library(modelr)
-grid.swim <- results_2017 %>% data_grid(Swim)
-grid.swim <- grid.swim %>% add_predictions(model = lm.swim_bike, var = 'pred.swim_bike')
+results_2017 <- results_2017 %>% 
+  mutate(swim_bike_pred = predict(lm.swim_bike))
+
 ggplot(results_2017) +
   geom_point(aes(Swim, Bike)) +
-  geom_line(data = grid.swim, aes(x = Swim, y = pred.swim_bike), color = 'red')
+  geom_line(aes(x = Swim, y = swim_bike_pred), color = 'lightcoral', size = 1.5)
 ```
 
 
@@ -121,19 +120,19 @@ ggplot(results_2017) +
 # solution
 lm.bike_run <- lm(data = results_2017, formula = Run ~ Bike)
 lm.bike_run$coefficients
-grid.bike <- results_2017 %>% data_grid(Bike)
-grid.bike <- grid.bike %>% add_predictions(model = lm.bike_run, var = 'pred.bike_run')
+results_2017 <- results_2017 %>% 
+  mutate(bike_run_pred = predict(lm.bike_run))
 ggplot(results_2017) +
   geom_point(aes(Bike, Run)) +
-  geom_line(data = grid.bike, aes(x = Bike, y = pred.bike_run), color = 'red')
+  geom_line( aes(x = Bike, y = bike_run_pred), color = 'lightcoral')
 
 lm.run_swim <- lm(data = results_2017, formula = Swim ~ Run)
 lm.run_swim$coefficients
-grid.run <- results_2017 %>% data_grid(Run)
-grid.run <- grid.run %>% add_predictions(model = lm.run_swim, var = 'pred.run_swim')
+results_2017 <- results_2017 %>% 
+  mutate(run_swim_pred = predict(lm.run_swim))
 ggplot(results_2017) +
   geom_point(aes(Run, Swim)) +
-  geom_line(data = grid.run, aes(x = Run, y = pred.run_swim), color = 'red')
+  geom_line(aes(x = Run, y = run_swim_pred), color = 'lightcoral')
 ```
 
 
@@ -151,11 +150,11 @@ What if we had reason to believe the association between the finishing times of 
 ```{r pt2 q1, include=TRUE}
 lm.run_bike <- lm(data = results_2017, formula = Bike ~ Run)
 lm.run_bike$coefficients
-grid.run <- results_2017 %>% data_grid(Run)
-grid.run <- grid.run  %>%  add_predictions(model = lm.run_bike, var= 'pred.run_bike')
+results_2017 <- results_2017 %>% 
+  mutate(run_bike_pred = predict(lm.run_bike))
 ggplot(results_2017) +
   geom_point(aes(Run, Bike)) +
-  geom_line(data = grid.run, aes(x = Run, y = pred.run_bike), color = 'red')
+  geom_line(aes(x = Run, y = run_bike_pred), color = 'lightcoral')
 ```
 
 2. Now, we can run the quadratic regression. To include the quadratic relation into our linear model, we will add a quadratic term as an additional predictor variable (which, in this case, is Run).
@@ -168,11 +167,12 @@ lm.run_bike2$coefficients
 3. To draw this regression line on our plot, we can take the grid of values used on our simple linear regression in step 1, and add another column with the predicted values from our new quadratic model. This new column contains the new y values of the regression line.
 
 ```{r pt2 q3, include=TRUE}
-grid.run <- grid.run  %>%  add_predictions(model = lm.run_bike2, var= 'pred.run_bike2')
+results_2017 <- results_2017 %>% 
+  mutate(run_bike_pred2 = predict(lm.run_bike2))
 ggplot(results_2017) +
   geom_point(aes(Run, Bike)) +
-  geom_line(data = grid.run, aes(x = Run, y = pred.run_bike), color = 'red') +
-  geom_line(data = grid.run, aes(x = Run, y = pred.run_bike2), color = 'green')
+  geom_line(aes(x = Run, y = run_bike_pred), color = 'lightcoral', size = 1.5) +
+  geom_line(aes(x = Run, y = run_bike_pred2), color = 'lightblue4', size = 1.5)
 ```
 
 4. Now, we can determine if our quadratic model fits the data better than our linear model. To do this, we can compute the RMSEs of both models (as discussed in [Lecture 4](lecture4.html)) and see which is lower.
@@ -202,14 +202,13 @@ lm.run_bike_gender$coefficients
 2. Now, let's plot our regression. Note that there will be two separate regression lines: one for the association between running and biking for males, and one for the association between running and biking for females. Also note that since we now technically have two predictor variables to go on our x-axis, we need to create a new grid that spans the values of the Run variable as well as the Gender variable
 
 ```{r pt3 q2, include=TRUE}
-grid.run_gender <- results_2017 %>% data_grid(Run, Gender)
-grid.run_gender <- grid.run_gender  %>%
-  add_predictions(model = lm.run_bike_gender, var= 'pred.run_bike_gender')
+results_2017 <- results_2017 %>% 
+  mutate(run_bike_gender = predict(lm.run_bike_gender))
 ggplot(results_2017) +
   geom_point(aes(Run, Bike)) +
-  geom_line(data = grid.run, aes(x = Run, y = pred.run_bike), color = 'red') +
-  geom_line(data = grid.run_gender, aes(x = Run, y = pred.run_bike_gender, col = Gender)) +
-  scale_color_manual(values = c(Female="blue", Male="green"))
+  geom_line(aes(x = Run, y = run_bike_pred), color = 'lightcoral', size = 1.5) +
+  geom_line(aes(x = Run, y = run_bike_gender, col = Gender), size = 1.5) +
+  scale_color_manual(values = c(Female="lightblue4", Male="darkseagreen3"))
 ```
 
 * We can now clearly see that females have slower bike times than males. Note that the red line in the middle corresponds to our simple linear regression without the gender effect. 
