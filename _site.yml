@@ -29,8 +29,8 @@ navbar:
           href: lecture5.html
         # - text: "Lecture 5a"
         #   href: lecture5a.html
-        # - text: "Lecture 6"
-        #   href: lecture6.html
+        - text: "Lecture 6"
+          href: lecture6.html
         # - text: "Lecture 7"
         #   href: lecture7.html
         # - text: "Lecture 8"

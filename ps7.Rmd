@@ -54,7 +54,7 @@ ggplot(payroll, aes(x = payroll_norm, y = WP,
 
 ```
 
-3. Now, fit a regression line to the data as a function of `Norm_Payroll`, then add it to the plot. 
+3. Now, fit a regression line to the data as a function of `payroll_norm`, then add it to the plot. 
 ```{r}
 payroll_model <- lm(WP ~ payroll_norm, data = payroll)
 
