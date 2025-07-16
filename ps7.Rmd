@@ -12,7 +12,7 @@ library(ggplot2)
 
 # Testing Regression Models
 
-We will now continue modeling data with regression, but we can now test and compare different models more efficiently. We will use this * [mlb_payrolls_train.csv](data/mlb_payrolls_train.csv) to analyze general manager performance based on team payrolls and winning percentages.
+We will now continue modeling data with regression, but we can now test and compare different models more efficiently. We will use this dataset on mlb payrolls: [mlb_payrolls_train.csv](data/mlb_payrolls_train.csv) to analyze general manager performance based on team payrolls and winning percentages.
 
 1. First, load in the data to R. Let's see the range of seasons that are included in this data 
 ```{r, include = TRUE}
@@ -20,7 +20,7 @@ payroll <- read_csv("data/mlb_payrolls_train.csv")
 
 unique(payroll$yearID)
 ```
-1. We can see that the data ranges from 1998 to 2023. Since the 2020 season was shortened due to Covid, filter it out. Then use `mutate()` to create a column names `WP` based on wins (W) and games (G). 
+1. We can see that the data ranges from 1998 to 2023. Since the 2020 season was shortened due to Covid, filter it out. Then use `mutate()` to create a column named `WP` based on wins (W) and games (G). 
 
 ```{r column names}
 head(payroll)
@@ -110,7 +110,7 @@ ggplot(payroll, aes(x = payroll_norm)) +
 
 An indication of a poor model fit is a non-uniform residual plot. This would indicate that perhaps a linear model is being used when the underlying trend is instead logarithmic, or polynomial. Do you observe this? 
 
-6. Finally, we can directly compare our models with out-of-sample performance. Load in  *[mlb_payrolls_test.csv](data/mlb_payrolls_test.csv) and call it `payrolls_test`. Do not refit your model but instead use `predict` to generate predictions for the test data set called `test_pred` and `test_log_pred`, similar to its usage in Lecture 6. Then, use the line below to compute the RMSE for each model. 
+6. Finally, we can directly compare our models with out-of-sample performance. Load in [mlb_payrolls_test.csv](data/mlb_payrolls_test.csv) and call it `payrolls_test`. Do not refit your model but instead use `predict` with the models you have already created to generate predictions for the test data set called `test_pred` and `test_log_pred`, similar to its usage in Lecture 6. Then, use the line below to compute the RMSE for each model. 
 ```{r}
 payrolls_test <- read_csv("data/mlb_payrolls_test.csv")
 payrolls_test <- payrolls_test %>%

@@ -472,9 +472,10 @@ $(document).ready(function () {
 <div id="testing-regression-models" class="section level1">
 <h1>Testing Regression Models</h1>
 <p>We will now continue modeling data with regression, but we can now
-test and compare different models more efficiently. We will use this *
-<a href="data/mlb_payrolls_train.csv">mlb_payrolls_train.csv</a> to
-analyze general manager performance based on team payrolls and winning
+test and compare different models more efficiently. We will use this
+dataset on mlb payrolls: <a
+href="data/mlb_payrolls_train.csv">mlb_payrolls_train.csv</a> to analyze
+general manager performance based on team payrolls and winning
 percentages.</p>
 <ol style="list-style-type: decimal">
 <li>First, load in the data to R. Let’s see the range of seasons that
@@ -495,7 +496,7 @@ are included in this data</li>
 <ol style="list-style-type: decimal">
 <li><p>We can see that the data ranges from 1998 to 2023. Since the 2020
 season was shortened due to Covid, filter it out. Then use
-<code>mutate()</code> to create a column names <code>WP</code> based on
+<code>mutate()</code> to create a column named <code>WP</code> based on
 wins (W) and games (G).</p></li>
 <li><p>Then, explore the relationship between payrolls and winning
 percentage by generating a scatterplot. Use <code>ifelse()</code> with
@@ -524,13 +525,13 @@ underlying trend is instead logarithmic, or polynomial. Do you observe
 this?</p>
 <ol start="6" style="list-style-type: decimal">
 <li>Finally, we can directly compare our models with out-of-sample
-performance. Load in *<a
+performance. Load in <a
 href="data/mlb_payrolls_test.csv">mlb_payrolls_test.csv</a> and call it
 <code>payrolls_test</code>. Do not refit your model but instead use
-<code>predict</code> to generate predictions for the test data set
-called <code>test_pred</code> and <code>test_log_pred</code>, similar to
-its usage in Lecture 6. Then, use the line below to compute the RMSE for
-each model.</li>
+<code>predict</code> with the models you have already created to
+generate predictions for the test data set called <code>test_pred</code>
+and <code>test_log_pred</code>, similar to its usage in Lecture 6. Then,
+use the line below to compute the RMSE for each model.</li>
 </ol>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>rmse <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">mean</span>((payrolls_test<span class="sc">$</span>WP <span class="sc">-</span> payrolls_test<span class="sc">$</span>test_pred)<span class="sc">^</span><span class="dv">2</span>))</span>
 <span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>rmse_log <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">mean</span>((payrolls_test<span class="sc">$</span>WP <span class="sc">-</span> payrolls_test<span class="sc">$</span>test_log_pred)<span class="sc">^</span><span class="dv">2</span>))</span></code></pre></div>
