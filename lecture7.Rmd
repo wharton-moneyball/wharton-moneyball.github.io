@@ -87,16 +87,18 @@ fg_train <- fg_train %>%
 ```
 
 Now we plot our predictions based on three different binning methods.
+```{r include = FALSE}
+#BRAT ASFFF
+```
 
 ```{r plot 3 bins}
 fg_plot  <- 
   ggplot(fg_train) + 
   geom_point(aes(x = Distance, y = phat_dist_10), alpha = 0.1, col = 'black') +
-  geom_point(aes(x = Distance, y = phat_dist_5), alpha = 0.1, col = 'blue') + 
-  geom_point(aes(x = Distance, y = phat_dist_2), alpha = 0.1, col = 'red')
-fg_plot
+  geom_point(aes(x = Distance, y = phat_dist_5), alpha = 0.1, col = 'lawngreen') + 
+  geom_point(aes(x = Distance, y = phat_dist_2), alpha = 0.1, col = 'white')
+fg_plot 
 ```
-
 Now when we binned our data into 2-yard increments, we find that our forecasts are no longer monotonic decreasing. Probability of making a field decreases overall; but in our 2-yard bins, the probability increases from 44 to 46 and 52 to 54 years. Remember, monotonic means only decreasing or only increasing for all values. In [Lecture 8](lecture8.html), we'll address this with a more formal regression method. 
 
 
