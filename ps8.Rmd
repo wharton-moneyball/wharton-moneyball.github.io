@@ -14,19 +14,101 @@ library(ggplot2)
 
 We will now continue modeling data with logistic regression using * [nfl_wp_train.csv](data/nfl_wp_train.csv) to analyze win percentages as a function of multiple variables. The dataset includes `game_id`, `season`, `label_win`, which is a binary (0 or 1) indicator on whether the possessing team won the game, `score_differential`, which is the current score differential between the team in possession and the team on defense, `posteam_spread`, which is the +- spread for the possessing team prior to the game start, `yardline_100`, `down`, and `ydstogo`. 
 
-1. First, load in the data. Next, do some exploratory data analysis (EDA) to understand the data. For example, you can plot the distribution of `score_differential` and `label_win`, and create a scatter plot of `score_differential` vs. `label_win`. Since the target variable, `label_win`, is binary, a good way to visualize the data would be to group data based on bins in your chosen variable and then calculate the win percentage based on the number of `label_win` = 1 values divided by the total number of observations in each bin.
-
-
-2. Then fit a logistic model using `glm` to predict `label_win` based on `score_differential`, then add the model's predictions to the dataset.
-```{r model and predictions.}
+1. First, load in the data. Previously, two different datasets have been provided for test and train. We can do this ourselves by running the following code which may also be helpful for your projects. For the first half of the problem set, use the training data.
+```{r split data, include = TRUE}
 nfl_wp = read.csv('data/nfl_wp_train.csv')
-spread_model = glm(label_win ~ score_differential, data = nfl_wp)
-spread_model
+
+set.seed(42)
+
+#get unique games   
+unique_game_ids <- unique(nfl_wp$game_id)
+# randomly sample 80% of the game ids for training, rounding down to nearest integer
+train_game_ids <- sample(unique_game_ids, size = floor(0.8 * length(unique_game_ids))) 
+
+#filter for train and test 
+nfl_train <- nfl_wp %>% filter(game_id %in% train_game_ids) 
+nfl_test <- nfl_wp %>% filter(!(game_id %in% train_game_ids))
 ```
 
-Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
 
-When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Cmd+Shift+K* to preview the HTML file). 
+2. Next, do some exploratory data analysis (EDA) to understand the data. First, plot a histogram of `score_differential` to show the distribution of the variable. Then, make a separate data table grouped by game and select the first instance of `posteam_spread` so that we have only one per game. Plot the distribution of this variable.
 
-The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+```{r}
 
+nfl_wp_grouped <- nfl_train %>%
+  group_by(game_id) %>%
+  reframe(
+    spread = first(posteam_spread)
+  ) 
+
+ggplot(nfl_wp_grouped, aes(x = spread)) +
+  geom_histogram(binwidth = 2, fill = "lightblue4") +
+  labs(title = "Distribution of Team Spread",
+       x = "Spread",
+       y = "Count") +
+  theme_minimal()
+
+ggplot(nfl_train, aes(x = score_differential)) +
+  geom_histogram(binwidth = 1, fill = "lightcoral") +
+  labs(title = "Distribution of Score Differential",
+       x = "Spread",
+       y = "Count") +
+  theme_minimal()
+```
+
+3. Then fit a logistic model called `diff_model` using `glm` to predict `label_win` based on `score_differential`. Call the model after you fit it to see the coefficients and then add its predictions to the dataset.
+```{r model and predictions.}
+
+diff_model = glm(label_win ~ score_differential, data = nfl_wp)
+diff_model 
+nfl_wp <- nfl_wp %>% 
+  mutate(diff_predicted_win = predict(diff_model, type = "response"))
+nfl_wp
+```
+
+4. Repeat step 3 but predicting with `posteam_spread` instead. 
+```{r}
+spread_model = glm(label_win ~ posteam_spread, data = nfl_wp)
+spread_model 
+nfl_wp <- nfl_wp %>% 
+  mutate(spread_predicted_win = predict(spread_model, type = "response"))
+nfl_wp
+```
+
+5. Now, plot the predicted probabilities of winning based on the two models you created in steps 3 and 4. Put the predictor variable on the x-axis and the predicted win probability on the y axis. Color the points by the label_win variable using `as.factor()`. Which variable seems to predict better? 
+```{r}
+ggplot(nfl_wp, aes(x = score_differential, y = diff_predicted_win, color = as.factor(label_win))) +
+  geom_point(alpha = 0.5) +
+  labs(title = "Predicted Win Probability vs Score Differential",
+       x = "Score Differential",
+       y = "Predicted Win Probability",
+       color = "Actual Win") +
+  theme_minimal()
+
+ggplot(nfl_wp, aes(x = posteam_spread, y = spread_predicted_win, color = as.factor(label_win))) +
+  geom_point(alpha = 0.5) +
+  labs(title = "Predicted Win Probability vs Spread",
+       x = "Spread",
+       y = "Predicted Win Probability",
+       color = "Actual Win") +
+  theme_minimal()
+```
+
+6. Finally, let's make a model to account for both variables. Name your model `spread_diff_model` and follow the previous steps to obtain predictions and plot the data as a function of score differential (since this variable is more continuous than spread as we saw with our histogram).
+```{r}
+spread_diff_model = glm(label_win ~ score_differential + posteam_spread, data = nfl_wp)
+nfl_wp <- nfl_wp %>% 
+  mutate(spread_diff_predicted_win = predict(spread_diff_model, type = "response"))
+ggplot(nfl_wp, aes(x = score_differential, y = spread_diff_predicted_win, color = as.factor(label_win))) +
+  geom_point(alpha = 0.5) +
+  labs(title = "Predicted Win Probability vs Score Differential (with Spread)",
+       x = "Score Differential",
+       y = "Predicted Win Probability",
+       color = "Actual Win") +
+  theme_minimal()
+```
+
+7. Let's test all of our models. Calculate the RMSE of the three different model predictions. Which model was the best? 
+
+
+*Challenge: Can you make an even better model with the other variables in the dataset or with numerical transformations to variables?*

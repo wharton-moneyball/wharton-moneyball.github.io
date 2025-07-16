@@ -407,6 +407,9 @@ $(document).ready(function () {
     <li>
       <a href="ps6.html">Problem Set 6</a>
     </li>
+    <li>
+      <a href="ps7.html">Problem Set 7</a>
+    </li>
   </ul>
 </li>
 <li class="dropdown">
@@ -586,11 +589,11 @@ methods.</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>fg_plot  <span class="ot">&lt;-</span> </span>
 <span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>  <span class="fu">ggplot</span>(fg_train) <span class="sc">+</span> </span>
 <span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x =</span> Distance, <span class="at">y =</span> phat_dist_10), <span class="at">alpha =</span> <span class="fl">0.1</span>, <span class="at">col =</span> <span class="st">&#39;black&#39;</span>) <span class="sc">+</span></span>
-<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x =</span> Distance, <span class="at">y =</span> phat_dist_5), <span class="at">alpha =</span> <span class="fl">0.1</span>, <span class="at">col =</span> <span class="st">&#39;blue&#39;</span>) <span class="sc">+</span> </span>
-<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x =</span> Distance, <span class="at">y =</span> phat_dist_2), <span class="at">alpha =</span> <span class="fl">0.1</span>, <span class="at">col =</span> <span class="st">&#39;red&#39;</span>)</span>
-<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a>fg_plot</span></code></pre></div>
-<p><img src="lecture7_files/figure-html/plot%203%20bins-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>Now when we binned our data into 2-yard increments, we find that our
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x =</span> Distance, <span class="at">y =</span> phat_dist_5), <span class="at">alpha =</span> <span class="fl">0.1</span>, <span class="at">col =</span> <span class="st">&#39;lawngreen&#39;</span>) <span class="sc">+</span> </span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x =</span> Distance, <span class="at">y =</span> phat_dist_2), <span class="at">alpha =</span> <span class="fl">0.1</span>, <span class="at">col =</span> <span class="st">&#39;white&#39;</span>)</span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a>fg_plot </span></code></pre></div>
+<p><img src="lecture7_files/figure-html/plot%203%20bins-1.png" width="672" style="display: block; margin: auto;" />
+Now when we binned our data into 2-yard increments, we find that our
 forecasts are no longer monotonic decreasing. Probability of making a
 field decreases overall; but in our 2-yard bins, the probability
 increases from 44 to 46 and 52 to 54 years. Remember, monotonic means

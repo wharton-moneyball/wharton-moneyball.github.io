@@ -34,7 +34,7 @@ payroll <- payroll %>%
 ```
 
 
-2. Then, explore the relationship between payrolls and winning percentage by generating a scatterplot. Use `ifelse()` with the `%in%` operator to mark the Oakland A's and New York Yankees' points on the plot. Be sure to mark them with different colors by using `scale_color_manual()` and to change the alpha values if needed so that overlapping point's don't completely obscure each other.
+2. Then, explore the relationship between payrolls and winning percentage by generating a scatterplot. Use `ifelse()` with the `%in%` operator to mark the Oakland A's and New York Yankees' points on the plot. Be sure to mark them with different colors by using `scale_color_manual()` and to change the alpha values or colors if needed so that overlapping point's don't completely obscure each other.
 ```{r plot}
 ggplot(payroll, aes(x = payroll_norm, y = WP, 
                     color = ifelse(name %in% c("New York Yankees", "Oakland Athletics"), name, "Other"))) +
@@ -48,7 +48,7 @@ ggplot(payroll, aes(x = payroll_norm, y = WP,
   theme_minimal() +
   scale_color_manual(values = c(
     "New York Yankees" = "navy",
-    "Oakland Athletics" = "green",
+    "Oakland Athletics" = "lawngreen",
     "Other" = "black"
   ))
 
@@ -74,7 +74,7 @@ ggplot(payroll, aes(x = payroll_norm, y = WP)) +
 ```
 
 4. Next, try fitting a model based on `log_payroll_norm` and adding that to the plot. 
-```{r}
+```{r log model}
 log_model = lm(WP ~ (log_payroll_norm), data = payroll)
 payroll <- payroll %>%
   mutate(log_predicted_wp = predict(log_model))
@@ -88,9 +88,9 @@ ggplot(payroll, aes(x = payroll_norm, y = WP)) +
   ) +
   theme_minimal()
 ```
-You should see that the log model will be non-linear. Just by looking at the plots from 3 and 4, which seems to fit the data better? 
+Just by looking at the plots from 3 and 4, which seems to fit the data better? 
 
-5. One way to potentially look at model performance is with the residuals. Using `add_residual` from `modelr`, add a column of residuals from each model to your payroll table. Then, generate a scatter plot of the residuals for each model. 
+5. We saw that in lecture 6, one way to potentially look at model performance is with the residuals. Using `add_residuals` from `modelr`, add a column of residuals from each model to your payroll table. Then, generate a scatter plot of the residuals for each model. 
 ```{r}
 library(modelr)
 payroll <- payroll %>%
@@ -98,7 +98,7 @@ payroll <- payroll %>%
   add_residuals(log_model, var = "log_residuals")
 
 ggplot(payroll, aes(x = payroll_norm)) +
-  geom_point(aes(y = residuals), color = "lightblue") +
+  geom_point(aes(y = residuals), color = "lightblue4") +
   geom_point(aes(y = log_residuals), color = "lightcoral") +
   labs(
     title = "Residuals of Payroll Models",
@@ -148,7 +148,7 @@ payrolls_test_summary <- payrolls_test %>%
 
 # Plot
 ggplot(payrolls_test_summary, aes(x = reorder(name, wins_from_prediction), y = wins_from_prediction)) +
-  geom_bar(stat = "identity", fill = "blue", alpha = 0.6) +
+  geom_bar(stat = "identity", fill = "lightblue4", alpha = 0.6) +
   labs(
     title = "Average Wins Above/Below Prediction by Team",
     x = "Team",
