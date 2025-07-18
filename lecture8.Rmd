@@ -29,7 +29,7 @@ We can fit a logistic regression model using the function `glm()`. In the code b
 logit_distance <- glm(Success~Distance, family = binomial, data = fg_train)
 ```
 
-We can visualize this model fit by (i) creating a grid of distance values and (ii) plotting the estimated probability of field goal success at each of the distances in the grid. We can do this using `data_grid()` and `add_predictions()` just like we did in [Lecture 6](lecture6.html). Notice, however, that in `add_predictions()` we have an extra argument `type="response"`. In the context of logistic regression, this argument tells R that we want to return the fitted probabilities instead of the fitted log-odds. 
+We can visualize this model fit by (i) creating a grid of distance values and (ii) plotting the estimated probability of field goal success at each of the distances in the grid. We can do this using `predict()` and `add_predictions()` just like we did in [Lecture 6](lecture6.html). Notice, however, that in `add_predictions()` we have an extra argument `type="response"`. In the context of logistic regression, this argument tells R that we want to return the fitted probabilities instead of the fitted log-odds. 
 
 ```{r add logit preds}
 distance_preds <- fg_train %>%
