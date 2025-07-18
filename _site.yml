@@ -50,8 +50,8 @@ navbar:
           href: ps6.html
         - text: "Problem Set 7"
           href: ps7.html 
-        # - text: "Problem Set 8"
-        #   href: ps8.html
+        - text: "Problem Set 8"
+          href: ps8.html
         # - text: "---"
         # - text: "nflfastR Lecture"
         #   href: lecture_nflfastR.html
