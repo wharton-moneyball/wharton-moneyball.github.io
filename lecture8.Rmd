@@ -33,11 +33,10 @@ We can visualize this model fit by (i) creating a grid of distance values and (i
 
 ```{r add logit preds}
 distance_preds <- fg_train %>%
-  data_grid(Distance) %>%
-  add_predictions(model = logit_distance, type = "response", var = "Prediction")
+  mutate(preds = predict(logit_distance, type = "response"))
 
 ggplot(data = distance_preds) + 
-  geom_line(mapping = aes(x = Distance, y = Prediction)) + 
+  geom_line(mapping = aes(x = Distance, y = preds)) + 
   ylim(c(0,1))
 ```
 
@@ -88,12 +87,11 @@ To visualize the predictions made by this model, we can also use `data_grid()`. 
 
 ```{r plot logit multiple}
 dist_kick_grid <- fg_train %>%
-  filter(Kicker %in% c("Bailey", "Vinatieri", "Zuerlein")) %>%
-  data_grid(Distance, Kicker) %>%
-  add_predictions(model = logit_dist_kicker, var = "Prediction", type = "response")
-
+   mutate(preds = predict(logit_dist_kicker, type = "response")) %>%
+   filter(Kicker %in% c("Bailey", "Vinatieri", "Zuerlein"))
+ 
 ggplot(data = dist_kick_grid) +
-  geom_line(mapping = aes(x = Distance, y = Prediction, color = Kicker))
+  geom_line(mapping = aes(x = Distance, y = preds, color = Kicker))
 ```
 
 In the call to `data_grid()` we included all of the variables that went into the model (`Distance` and `Kicker`). This creates a tbl with every combination of distance and kicker. Note that if we had not filtered to just three kickers, the resulting tbl would incredibly long. Just like we did earlier, in our call to `geom_line()`, we specified that we wanted to plot distance on the x-axis and the predicted success probability on the y-axis. However, we now have an additional aesthetic `color = Kicker`. Since our model predicts different probabilities for different kickers, this additional aesthetic tells ggplot to use a separate color for each kicker's probability curve. We can see that the model predicts Dan Bailey to have consistently higher chances of converting a field goal successful than either Greg Zuerlein or Adam Vinatieri.

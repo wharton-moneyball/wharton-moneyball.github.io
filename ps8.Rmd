@@ -108,7 +108,7 @@ ggplot(nfl_wp, aes(x = score_differential, y = spread_diff_predicted_win, color 
   theme_minimal()
 ```
 
-7. Let's test all of our models. Use `predict()` on the test data with the previously created models, then add them to the test dataset. Then, run the following code below to convert from win probability to a predicted win or loss and then the accuracy. Which model ended up being the best?
+7. Let's test all of our models. Use `predict()` on the test data with the previously created models, then add them to the test dataset. Then, run the following code below to convert from win probability to a predicted win or loss and then calculate the accuracy. Print your results. Which model ended up being the best?
 ```{r predictions}
 diff_model <- glm(label_win ~ score_differential, data = nfl_train, family = "binomial")
 spread_model <- glm(label_win ~ posteam_spread, data = nfl_train, family = "binomial")
