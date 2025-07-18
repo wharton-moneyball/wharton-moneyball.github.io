@@ -16,7 +16,7 @@ We will now continue modeling data with logistic regression using [nfl_wp.csv](d
 
 1. First, load in the data. Previously, two different datasets have been provided for test and train. We can do this ourselves by running the following code which may also be helpful for your projects. For the first half of the problem set, use the training data.
 ```{r split data, include = TRUE}
-nfl_wp = read.csv('data/nfl_wp_train.csv')
+nfl_wp = read.csv('data/nfl_wp.csv')
 
 set.seed(42)
 
