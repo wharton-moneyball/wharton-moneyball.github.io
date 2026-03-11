@@ -5,7 +5,7 @@ output:
     self_contained: true
 ---
 
-<meta http-equiv="refresh" content="0;url=https://whartonsabi.github.io/moneyball/home">
-<script>window.location.replace("https://whartonsabi.github.io/moneyball/home");</script>
+<meta http-equiv="refresh" content="0;url=https://whartonsabi.github.io/moneyball/">
+<script>window.location.replace("https://whartonsabi.github.io/moneyball/");</script>
 
-Redirecting to [Moneyball Academy](https://whartonsabi.github.io/moneyball/home)...
+Redirecting to [Moneyball Academy](https://whartonsabi.github.io/moneyball/)...
